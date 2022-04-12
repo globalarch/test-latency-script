@@ -87,6 +87,7 @@ def get_orgsnid(host: str, username: str, token: str, org_name: str):
 def evaluate(func, **kwargs):
     for i in range(N):
         result = []
+        result.append(kwargs["endpoint"])
         result.append(kwargs["backend_server_location"])
         result.append(kwargs["organization_data"])
         start = time.perf_counter()
@@ -117,18 +118,18 @@ columns = ['endpoint','backend server location', 'organization data', 'time (sec
 # oregon
 print('oregon')
 token = login(org_host, username, password)
-print(evaluate(fetch_runtime, host=org_host, org_id=sgp_org_id, token=token, backend_server_location=org_org_name, organization_data=sgp_org_name, endpoint='/runtime'))
-print(evaluate(fetch_runtime, host=org_host, org_id=org_org_id, token=token, backend_server_location=org_org_name, organization_data=org_org_name, endpoint='/runtime'))
-print(evaluate(fetch_runtime_globalarch, host=org_host, org_id=sgp_org_id, token=token, backend_server_location=org_org_name, organization_data=sgp_org_name, endpoint='/runtime/globalarch'))
-print(evaluate(fetch_runtime_globalarch, host=org_host, org_id=org_org_id, token=token, backend_server_location=org_org_name, organization_data=org_org_name, endpoint='/runtime/globalarch'))
+evaluate(fetch_runtime, host=org_host, org_id=sgp_org_id, token=token, backend_server_location=org_org_name, organization_data=sgp_org_name, endpoint='/runtime')
+evaluate(fetch_runtime, host=org_host, org_id=org_org_id, token=token, backend_server_location=org_org_name, organization_data=org_org_name, endpoint='/runtime')
+evaluate(fetch_runtime_globalarch, host=org_host, org_id=sgp_org_id, token=token, backend_server_location=org_org_name, organization_data=sgp_org_name, endpoint='/runtime/globalarch')
+evaluate(fetch_runtime_globalarch, host=org_host, org_id=org_org_id, token=token, backend_server_location=org_org_name, organization_data=org_org_name, endpoint='/runtime/globalarch')
 
 # singapore
 print('singapore')
 token = login(sgp_host, username, password)
-print(evaluate(fetch_runtime, host=sgp_host, org_id=sgp_org_id, token=token, backend_server_location=sgp_org_name, organization_data=sgp_org_name, endpoint='/runtime'))
-print(evaluate(fetch_runtime, host=sgp_host, org_id=org_org_id, token=token, backend_server_location=sgp_org_name, organization_data=org_org_name, endpoint='/runtime'))
-print(evaluate(fetch_runtime_globalarch, host=sgp_host, org_id=sgp_org_id, token=token, backend_server_location=sgp_org_name, organization_data=sgp_org_name, endpoint='/runtime/globalarch'))
-print(evaluate(fetch_runtime_globalarch, host=sgp_host, org_id=org_org_id, token=token, backend_server_location=sgp_org_name, organization_data=org_org_name, endpoint='/runtime/globalarch'))
+evaluate(fetch_runtime, host=sgp_host, org_id=sgp_org_id, token=token, backend_server_location=sgp_org_name, organization_data=sgp_org_name, endpoint='/runtime')
+evaluate(fetch_runtime, host=sgp_host, org_id=org_org_id, token=token, backend_server_location=sgp_org_name, organization_data=org_org_name, endpoint='/runtime')
+evaluate(fetch_runtime_globalarch, host=sgp_host, org_id=sgp_org_id, token=token, backend_server_location=sgp_org_name, organization_data=sgp_org_name, endpoint='/runtime/globalarch')
+evaluate(fetch_runtime_globalarch, host=sgp_host, org_id=org_org_id, token=token, backend_server_location=sgp_org_name, organization_data=org_org_name, endpoint='/runtime/globalarch')
 
 df = pd.DataFrame(data=data, columns=columns)
 df.to_csv('result.csv')
