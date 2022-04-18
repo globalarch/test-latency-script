@@ -55,7 +55,6 @@ def fetch_runtime(host=None, org_id=None, token=None):
 def fetch_runtime_globalarch(host=None, org_id=None, token=None):
     endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/globalarch'
     headers = {
-        'Authorization': token,
         'Content-Type': 'application/json; charset=UTF-8',
     }
     data = {
@@ -118,18 +117,14 @@ columns = ['endpoint','backend server location', 'organization data', 'time (sec
 # oregon
 print('oregon')
 token = login(org_host, username, password)
-evaluate(fetch_runtime, host=org_host, org_id=sgp_org_id, token=token, backend_server_location=org_org_name, organization_data=sgp_org_name, endpoint='/runtime')
 evaluate(fetch_runtime, host=org_host, org_id=org_org_id, token=token, backend_server_location=org_org_name, organization_data=org_org_name, endpoint='/runtime')
-evaluate(fetch_runtime_globalarch, host=org_host, org_id=sgp_org_id, token=token, backend_server_location=org_org_name, organization_data=sgp_org_name, endpoint='/runtime/globalarch')
 evaluate(fetch_runtime_globalarch, host=org_host, org_id=org_org_id, token=token, backend_server_location=org_org_name, organization_data=org_org_name, endpoint='/runtime/globalarch')
 
 # singapore
 print('singapore')
 token = login(sgp_host, username, password)
 evaluate(fetch_runtime, host=sgp_host, org_id=sgp_org_id, token=token, backend_server_location=sgp_org_name, organization_data=sgp_org_name, endpoint='/runtime')
-evaluate(fetch_runtime, host=sgp_host, org_id=org_org_id, token=token, backend_server_location=sgp_org_name, organization_data=org_org_name, endpoint='/runtime')
 evaluate(fetch_runtime_globalarch, host=sgp_host, org_id=sgp_org_id, token=token, backend_server_location=sgp_org_name, organization_data=sgp_org_name, endpoint='/runtime/globalarch')
-evaluate(fetch_runtime_globalarch, host=sgp_host, org_id=org_org_id, token=token, backend_server_location=sgp_org_name, organization_data=org_org_name, endpoint='/runtime/globalarch')
 
 df = pd.DataFrame(data=data, columns=columns)
 df.to_csv('result.csv')
