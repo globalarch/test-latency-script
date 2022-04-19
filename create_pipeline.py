@@ -86,10 +86,10 @@ for i in range(1,n+1):
     create_runtime(org_pipeline_id, org_org_name)
 
 # add region
-mongo_host = sys.argv[2]
+# mongo_host = sys.argv[2]
 
-client = MongoClient(host=mongo_host, port=27017)
-slserver_db = client["slserver"]
-pipeline_rt = slserver_db["pm.pipeline_rt"]
-pipeline_rt.update_many({"org_snode_id": sgp_org_id}, {"$set": {"region": "singapore"}})
-pipeline_rt.update_many({"org_snode_id": org_org_id}, {"$set": {"region": "oregon"}})
+# client = MongoClient(host=mongo_host, port=27017)
+# slserver_db = client["slserver"]
+# pipeline_rt = slserver_db["pm.pipeline_rt"]
+# pipeline_rt.update_many({"org_snode_id": sgp_org_id}, {"$set": {"region": "singapore"}})
+# pipeline_rt.update_many({"org_snode_id": org_org_id}, {"$set": {"region": "oregon"}})
