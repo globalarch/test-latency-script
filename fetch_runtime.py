@@ -58,7 +58,7 @@ def fetch_runtime_all(host=None, org_id=None, token=None):
         ruuid_detail["name"] = runtime["label"]
         ruuid_detail["ruuid"] = runtime["instance_id"]
         ruuid_list.append(ruuid_detail)
-    return runtime_list
+    return ruuid_list
 
 def fetch_runtime_all_globalarch(host=None, org_id=None, token=None):
     endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/globalarch'
