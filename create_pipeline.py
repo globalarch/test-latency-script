@@ -1,9 +1,8 @@
 import requests
 import json
 import sys
-from pymongo import MongoClient
 
-def create_pipeline(org_id: str, name: str, org_name: str):
+def create_pipeline(host: str, org_id: str, name: str, org_name: str):
     endpoint = f'{host}/api/2/{org_id}/rest/pipeline/create'
     headers = {
         'Authorization': token,
@@ -18,7 +17,7 @@ def create_pipeline(org_id: str, name: str, org_name: str):
     # print(response.json())
     return response.json()["response_map"]["snode_id"]
 
-def update_pipeline(org_id: str, name: str, snode_id: str):
+def update_pipeline(host: str, org_id: str, name: str, snode_id: str):
     endpoint = f'{host}/api/2/{org_id}/rest/pipeline/update/{snode_id}'
     headers = {
         'Authorization': token,
@@ -29,7 +28,7 @@ def update_pipeline(org_id: str, name: str, snode_id: str):
     response = requests.post(endpoint, headers=headers, params=params, data=json.dumps(data))
     print('update {} {}'.format(name, response.json()))
 
-def create_runtime(snode_id: str, org_name: str):
+def create_runtime(host: str, snode_id: str, org_name: str):
     endpoint = f'{host}/api/1/rest/pipeline/prepare/{snode_id}'
     headers = {
         'Authorization': token,
@@ -47,7 +46,7 @@ def login(host: str, username: str, password: str):
     r = requests.get(host + path, params=params, auth=(username,password))
     return 'SLToken ' + r.json()["response_map"]["token"]
 
-def get_orgsnid(username: str, org_name: str):
+def get_orgsnid(host: str, username: str, org_name: str):
     path = '/api/1/rest/asset/user/{}'.format(username)
     headers = {
         'Authorization': token,
@@ -69,20 +68,20 @@ sgp_org_name = 'singapore'
 org_org_name = 'oregon'
 n = 5
 token = login(sgp_host, username, password)
-sgp_org_id = get_orgsnid(username, sgp_org_name)
+sgp_org_id = get_orgsnid(sgp_host, username, sgp_org_name)
 for i in range(1,n+1):
     sgp_pipeline_name = f'sgp {i}'
-    sgp_pipeline_id = create_pipeline(sgp_org_id, sgp_pipeline_name, sgp_org_name)
-    update_pipeline(sgp_org_id, sgp_pipeline_name, sgp_pipeline_id)
-    create_runtime(sgp_pipeline_id, sgp_org_name)
+    sgp_pipeline_id = create_pipeline(sgp_host, sgp_org_id, sgp_pipeline_name, sgp_org_name)
+    update_pipeline(sgp_host, sgp_org_id, sgp_pipeline_name, sgp_pipeline_id)
+    create_runtime(sgp_host, sgp_pipeline_id, sgp_org_name)
 
 token = login(ore_host, username, password)
-org_org_id = get_orgsnid(username, org_org_name)
+org_org_id = get_orgsnid(ore_host, username, org_org_name)
 for i in range(1,n+1):
     org_pipeline_name = f'org {i}'
-    org_pipeline_id = create_pipeline(org_org_id, org_pipeline_name, org_org_name)
-    update_pipeline(org_org_id, org_pipeline_name, org_pipeline_id)
-    create_runtime(org_pipeline_id, org_org_name)
+    org_pipeline_id = create_pipeline(ore_host, org_org_id, org_pipeline_name, org_org_name)
+    update_pipeline(ore_host, org_org_id, org_pipeline_name, org_pipeline_id)
+    create_runtime(ore_host, org_pipeline_id, org_org_name)
 
 # print(token)
 
