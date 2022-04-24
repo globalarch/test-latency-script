@@ -104,27 +104,25 @@ N = 10
 
 username = 'admin@snaplogic.com'
 password = 'Ephemeral$123'
-org_host = sys.argv[1]
-sgp_host = sys.argv[2]
-org_org_name = 'oregon'
-sgp_org_name = 'singapore'
-token = login(org_host, username, password)
-org_org_id = get_orgsnid(org_host, username, token, org_org_name)
-sgp_org_id = get_orgsnid(org_host, username, token, sgp_org_name)
+host = sys.argv[1]
+cross_region_host = sys.argv[2]
+org_name = sys.argv[3]
+if org_name == 'oregon': cross_org_name = 'singapore'
+if org_name == 'singapore': cross_org_name = 'oregon'
+token = login(host, username, password)
+org_id = get_orgsnid(host, username, token, org_name)
 data = []
 columns = ['endpoint','backend server location', 'organization data', 'time (secs)']
 
-# oregon
-print('oregon')
-token = login(org_host, username, password)
-evaluate(fetch_runtime, host=org_host, org_id=org_org_id, token=token, backend_server_location=org_org_name, organization_data=org_org_name, endpoint='/runtime')
-evaluate(fetch_runtime_globalarch, host=org_host, org_id=org_org_id, token=token, backend_server_location=org_org_name, organization_data=org_org_name, endpoint='/runtime/globalarch')
+print('backend server: %s', org_name)
+token = login(host, username, password)
+evaluate(fetch_runtime, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime')
+evaluate(fetch_runtime_globalarch, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/globalarch')
 
-# singapore
-print('singapore')
-token = login(sgp_host, username, password)
-evaluate(fetch_runtime, host=sgp_host, org_id=sgp_org_id, token=token, backend_server_location=sgp_org_name, organization_data=sgp_org_name, endpoint='/runtime')
-evaluate(fetch_runtime_globalarch, host=sgp_host, org_id=sgp_org_id, token=token, backend_server_location=sgp_org_name, organization_data=sgp_org_name, endpoint='/runtime/globalarch')
+print('backend server: %s', cross_org_name)
+token = login(cross_region_host, username, password)
+evaluate(fetch_runtime, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime')
+evaluate(fetch_runtime_globalarch, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/globalarch')
 
 df = pd.DataFrame(data=data, columns=columns)
 df.to_csv('result.csv')
