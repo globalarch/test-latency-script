@@ -39,7 +39,7 @@ def create_runtime(host: str, token: str, snode_id: str):
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
     print(response.json())
 
-def fetch_runtime(host=None, org_id=None, token=None):
+def fetch_runtime_all(host=None, org_id=None, token=None):
     endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime'
     headers = {
         'Authorization': token,
@@ -51,8 +51,16 @@ def fetch_runtime(host=None, org_id=None, token=None):
         "limit": 0,
     }
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
+    ruuid_list = []
+    runtime_list = response.json()["response_map"]["entries"]
+    for runtime in runtime_list:
+        ruuid_detail = {}
+        ruuid_detail["name"] = runtime["label"]
+        ruuid_detail["ruuid"] = runtime["instance_id"]
+        ruuid_list.append(ruuid_detail)
+    return runtime_list
 
-def fetch_runtime_globalarch(host=None, org_id=None, token=None):
+def fetch_runtime_all_globalarch(host=None, org_id=None, token=None):
     endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/globalarch'
     headers = {
         'Content-Type': 'application/json; charset=UTF-8',
@@ -64,6 +72,16 @@ def fetch_runtime_globalarch(host=None, org_id=None, token=None):
         "is_globalarch": True,
     }
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
+
+
+def fetch_runtime_one(host=None, org_id=None, token=None, ruuid=None):
+    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime{ruuid}'
+    headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json; charset=UTF-8',
+    }
+    params = {"level": "details"}
+    response = requests.post(endpoint, headers=headers, params=params)
 
 def login(host:str, username: str, password: str):
     path = '/api/1/rest/asset/session'
@@ -116,13 +134,16 @@ columns = ['endpoint','backend server location', 'organization data', 'time (sec
 
 print('backend server: %s', org_name)
 token = login(host, username, password)
-evaluate(fetch_runtime, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime')
-evaluate(fetch_runtime_globalarch, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/globalarch')
+evaluate(fetch_runtime_all, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime')
+evaluate(fetch_runtime_all_globalarch, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/globalarch')
 
 print('backend server: %s', cross_org_name)
 token = login(cross_region_host, username, password)
-evaluate(fetch_runtime, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime')
-evaluate(fetch_runtime_globalarch, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/globalarch')
+evaluate(fetch_runtime_all, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime')
+evaluate(fetch_runtime_all_globalarch, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/globalarch')
+
+ruuid_list = fetch_runtime_all(host=host, org_id=org_id, token=token)
+evaluate(fetch_runtime_one, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/<ruuid>', ruuid=ruuid_list[1]["ruuid"])
 
 df = pd.DataFrame(data=data, columns=columns)
 df.to_csv('result.csv')
