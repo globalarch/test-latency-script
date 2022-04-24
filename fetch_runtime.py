@@ -132,16 +132,17 @@ org_id = get_orgsnid(host, username, token, org_name)
 data = []
 columns = ['endpoint','backend server location', 'organization data', 'time (secs)']
 
-print('backend server: %s', org_name)
+print('backend server: ', org_name)
 token = login(host, username, password)
 evaluate(fetch_runtime_all, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime')
 evaluate(fetch_runtime_all_globalarch, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/globalarch')
 
-print('backend server: %s', cross_org_name)
+print('backend server: ', cross_org_name)
 token = login(cross_region_host, username, password)
 evaluate(fetch_runtime_all, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime')
 evaluate(fetch_runtime_all_globalarch, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/globalarch')
 
+token = login(host, username, password)
 ruuid_list = fetch_runtime_all(host=host, org_id=org_id, token=token)
 evaluate(fetch_runtime_one, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/<ruuid>', ruuid=ruuid_list[1]["ruuid"])
 
