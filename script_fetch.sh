@@ -1,2 +1,2 @@
 pip3 install numpy pandas 
-python3 fetch_runtime.py $1 $2
+python3 fetch_runtime.py $1 $2 $3
