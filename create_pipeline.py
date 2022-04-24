@@ -41,7 +41,7 @@ def create_runtime(snode_id: str, org_name: str):
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
     # print(response.json())
 
-def login(username: str, password: str):
+def login(host: str, username: str, password: str):
     path = '/api/1/rest/asset/session'
     params = {"caller": username}
     r = requests.get(host + path, params=params, auth=(username,password))
@@ -62,28 +62,31 @@ def get_orgsnid(username: str, org_name: str):
 
 username = 'admin@snaplogic.com'
 password = 'Ephemeral$123'
-host = sys.argv[1]
+ore_host = sys.argv[1]
+sgp_host = sys.argv[2]
 
-token = login(username, password)
 sgp_org_name = 'singapore'
 org_org_name = 'oregon'
-sgp_org_id = get_orgsnid(username, sgp_org_name)
-org_org_id = get_orgsnid(username, org_org_name)
-
-# print(token)
-
-# create pipline runtime
 n = 5
+token = login(sgp_host, username, password)
+sgp_org_id = get_orgsnid(username, sgp_org_name)
 for i in range(1,n+1):
     sgp_pipeline_name = f'sgp {i}'
     sgp_pipeline_id = create_pipeline(sgp_org_id, sgp_pipeline_name, sgp_org_name)
     update_pipeline(sgp_org_id, sgp_pipeline_name, sgp_pipeline_id)
     create_runtime(sgp_pipeline_id, sgp_org_name)
 
+token = login(ore_host, username, password)
+org_org_id = get_orgsnid(username, org_org_name)
+for i in range(1,n+1):
     org_pipeline_name = f'org {i}'
     org_pipeline_id = create_pipeline(org_org_id, org_pipeline_name, org_org_name)
     update_pipeline(org_org_id, org_pipeline_name, org_pipeline_id)
     create_runtime(org_pipeline_id, org_org_name)
+
+# print(token)
+
+# create pipline runtime
 
 # add region
 # mongo_host = sys.argv[2]
