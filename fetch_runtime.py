@@ -5,41 +5,12 @@ import numpy as np
 import pandas as pd
 import sys
 
-def create_pipeline(host: str, org_id: str, token: str, name: str):
-    endpoint = f'{host}/api/2/{org_id}/rest/pipeline/create'
-    headers = {
-        'Authorization': token,
-        'Content-Type': 'application/json; charset=UTF-8',
-    }
-    params = {
-        'path_id': '/globalarch/projects/shared', 
-        'duplicate_check': True 
-    }
-    data = {"class_fqid":"com-snaplogic-pipeline_9","client_id":"x163","property_map":{"error":{"error0":{"view_type":{"value":"document"},"label":{"value":"error0"}},"error1":{"view_type":{"value":"binary"},"label":{"value":"error1"}},"error_behavior":{"value":"none"}},"info":{"label":{"value":name},"author":{"value":"admin@snaplogic.com"},"pipeline_doc_uri":{"value":None},"notes":{"value":None},"purpose":{"value":None}},"settings":{"suspendable":{"value":False},"test_pipeline":{"value":False},"error_pipeline":{"value":None,"expression":False},"error_param_table":{"value":[]},"param_table":{"value":[]},"imports":{"value":[]}},"input":{},"output":{}},"snap_map":{},"link_map":{},"render_map":{"scale_ratio":1,"pan_x_num":0,"pan_y_num":0,"default_snaplex":"6213a53477bdf753fcd49b37","detail_map":{}},"link_serial":100}
-    response = requests.post(endpoint, headers=headers, params=params, data=json.dumps(data))
-    return response.json()["response_map"]["snode_id"]
-
-def update_pipeline(host: str, org_id: str, token: str, name: str, snode_id: str):
-    endpoint = f'{host}/api/2/{org_id}/rest/pipeline/update/{snode_id}'
-    headers = {
-        'Authorization': token,
-        'Content-Type': 'application/json; charset=UTF-8',
-    }
-    params = { 'duplicate_check': True }
-    data = {"update_map":{"create":{"snap":{"x164":{"class_fqid":"com-snaplogic-snaps-rest-get_2-main14627","class_id":"com-snaplogic-snaps-rest-get","class_version":2,"instance_fqid":"x164_1","instance_version":1,"property_map":{"info":{"notes":{},"label":{"value":"REST Get"}},"view_serial":100,"account":{"account_ref":{"value":{}}},"input":{"input0":{"label":{"value":"input0"},"view_type":{"value":"document"}}},"settings":{"retryInterval":{"value":3},"trustAllCerts":{"value":False},"execution_mode":{"value":"Validate & Execute"},"retry":{"value":5},"hasNext":{"expression":True,"value": None},"serviceUrl":{"expression":False,"value":"https://www.google.com"},"processArray":{"value":False},"retryPolicy":{"value":"Connection errors"},"showAllHeaders":{"value":False},"paginationInterval":{"value":0},"executeDuringPreview":{"value":True},"normalizeUri":{"value":True},"header":{"value":[]},"responseEntityType":{"value":"DEFAULT"},"followRedirects":{"value":True},"timeout":{"value":900},"connTimeout":{"value":30},"nextUrl":{"expression":True,"value":None},"queryParams":{"value":[]},"rawData":{"value":False}},"error":{"error0":{"label":{"value":"error0"},"view_type":{"value":"document"}},"error_behavior":{"value":"fail"}},"output":{"output0":{"label":{"value":"output0"},"view_type":{"value":"document"}}}},"class_build_tag":"main14627","client_id":"x164"},"x165":{"class_fqid":"com-snaplogic-snaps-transform-datatransform_4-main14627","class_id":"com-snaplogic-snaps-transform-datatransform","class_version":4,"instance_fqid":"x165_1","instance_version":9,"property_map":{"info":{"notes":{},"label":{"value":"Mapper"}},"view_serial":100,"input":{"input0":{"view_type":{"value":"document"},"label":{"value":"input0"}}},"settings":{"NoneSafeAccess":{"value":False},"passThrough":{"value":False},"execution_mode":{"value":"Validate & Execute"},"transformations":{"value":{"mappingTable":{"value":[{"expression":{"expression":True,"value":"$headers.date"},"targetPath":{"value":"$date"}},{"expression":{"expression":True,"value":"$headers.server"},"targetPath":{"value":"$server"}}]},"mappingRoot":{"value":"$"}}}},"error":{"error0":{"view_type":{"value":"document"},"label":{"value":"error0"}},"error_behavior":{"value":"fail"}},"output":{"output0":{"view_type":{"value":"document"},"label":{"value":"output0"}}}},"class_build_tag":"main14627","client_id":"x165"},"x166":{"class_fqid":"com-snaplogic-snaps-transform-csvformatter_3-main14627","class_id":"com-snaplogic-snaps-transform-csvformatter","class_version":3,"instance_fqid":"x166_1","instance_version":1,"property_map":{"info":{"label":{"value":"CSV Formatter"}},"view_serial":100,"input":{"input0":{"label":{"value":"input0"},"view_type":{"value":"document"}}},"settings":{"execution_mode":{"value":"Validate & Execute"},"escapeChar":{"value":"\\"},"quoteMode":{"value":"ALL"},"quoteCharacter":{"value":"\""},"writeHeader":{"value":True},"charset":{"value":"UTF-8"},"ignoreEmptyStream":{"value":False},"writeBOM":{"value":False},"delimiter":{"value":","},"errorPolicy":{"value":"Default"},"newlineCharacter":{"value":"LF"},"useDefinedHeader":{"value":False},"outputHeader":{"value":[{"expression":{"expression":True,"value":""}}]}},"error":{"error0":{"label":{"value":"error0"},"view_type":{"value":"document"}},"error_behavior":{"value":"fail"}},"output":{"output0":{"label":{"value":"output0"},"view_type":{"value":"binary"}}}},"class_build_tag":"main14627","client_id":"x166"},"x167":{"class_fqid":"com-snaplogic-snaps-binary-write_3-main14627","class_id":"com-snaplogic-snaps-binary-write","class_version":3,"instance_fqid":"x167_1","instance_version":1,"property_map":{"info":{"notes":{},"label":{"value":"File Writer"}},"view_serial":100,"account":{"account_ref":{"value":{}}},"settings":{"retryInterval":{"expression":False,"value":1},"retries":{"expression":False,"value":0},"execution_mode":{"value":"Execute only"},"flushIntervalKb":{"value":-1},"writeHeader":{"value":False},"cannedAcls":{"value":"Private"},"createDir":{"value":False},"executable_during_suggest":{"value":False},"filename":{"expression":False,"value":"google_header.csv"},"writeEmptyFile":{"value":False},"UserPermissionsKey":{"value":[]},"advancedProperties":{"value":[]},"validate":{"value":False},"fileAction":{"value":"OVERWRITE"}},"output":{},"error":{"error0":{"label":{"value":"error0"},"view_type":{"value":"document"}},"error_behavior":{"value":"fail"}},"input":{"input0":{"label":{"value":"input0"},"view_type":{"value":"binary"}}}},"class_build_tag":"main14627","client_id":"x167"}},"link":{"link100":{"dst_id":"x167","dst_view_id":"input0","src_id":"x166","src_view_id":"output0"},"link101":{"dst_id":"x165","dst_view_id":"input0","src_id":"x164","src_view_id":"output0"},"link102":{"dst_id":"x166","dst_view_id":"input0","src_id":"x165","src_view_id":"output0"}}},"update":{"snap":{},"link":{},"render_map":{"pan_x_num":0,"default_snaplex":"6213a53477bdf753fcd49b37","scale_ratio":1,"detail_map":{"x164":{"grid_x_int":4,"grid_y_int":2,"rot_int":0,"recommendation_id":None,"source":"","index":None,"rot_tail_int":0,"output":{},"input":{}},"x165":{"grid_x_int":5,"grid_y_int":2,"rot_int":0,"recommendation_id":None,"source":"","index":None,"rot_tail_int":0,"output":{},"input":{}},"x166":{"grid_x_int":6,"grid_y_int":2,"rot_int":0,"recommendation_id":None,"source":"","index":None,"rot_tail_int":0,"output":{},"input":{}},"x167":{"grid_x_int":7,"grid_y_int":2,"rot_int":0,"recommendation_id":None,"source":"","index":None,"rot_tail_int":0,"output":{},"input":{}}},"pan_y_num":0},"pipeline":{"info":{"notes":{"value":None},"label":{"value":name},"purpose":{"value":None},"pipeline_doc_uri":{"value":None},"author":{"value":"admin@snaplogic.com"}},"error":{"error_behavior":{"value":"none"}},"settings":{"param_table":{"value":[]},"suspendable":{"value":False},"test_pipeline":{"value":False},"imports":{"value":[]},"error_param_table":{"value":[]},"error_pipeline":{"expression":False,"value":None}},"instance_version":1,"input":{"x164_input0":{"label":{"value":"REST Get - input0"},"view_type":{"value":"document"}}},"output":{}}},"delete":{"snap":[],"link":[]},"link_serial":103}}
-    response = requests.post(endpoint, headers=headers, params=params, data=json.dumps(data))
-
-def create_runtime(host: str, token: str, snode_id: str):
-    endpoint = f'{host}/api/1/rest/pipeline/prepare/{snode_id}'
-    headers = {
-        'Authorization': token,
-        'Content-Type': 'application/json; charset=UTF-8',
-    }
-    data = { "runtime_path_id": "globalarch/rt/garchplex/dev", "runtime_label": "garchplex", "do_start": True, "async": True, "priority": 10 }
-    response = requests.post(endpoint, headers=headers, data=json.dumps(data))
-    print(response.json())
-
-def fetch_runtime_all(host=None, org_id=None, token=None):
+def fetch_runtime_all(kwargs):
+    # runtime_manager -> pipeline_rt_db -> mongo
+    # list -> search -> find
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
     endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime'
     headers = {
         'Authorization': token,
@@ -51,16 +22,16 @@ def fetch_runtime_all(host=None, org_id=None, token=None):
         "limit": 0,
     }
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
-    ruuid_list = []
     runtime_list = response.json()["response_map"]["entries"]
-    for runtime in runtime_list:
-        ruuid_detail = {}
-        ruuid_detail["name"] = runtime["label"]
-        ruuid_detail["ruuid"] = runtime["instance_id"]
-        ruuid_list.append(ruuid_detail)
-    return ruuid_list
+    print('fetch_runtime_all',response.status_code)
+    return runtime_list
 
-def fetch_runtime_all_globalarch(host=None, org_id=None, token=None):
+def fetch_runtime_all_globalarch(kwargs):
+    # runtime_manager -> pipeline_rt_db -> mongo
+    # list -> search -> find
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
     endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/globalarch'
     headers = {
         'Content-Type': 'application/json; charset=UTF-8',
@@ -72,16 +43,109 @@ def fetch_runtime_all_globalarch(host=None, org_id=None, token=None):
         "is_globalarch": True,
     }
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
+    print('fetch_runtime_all_globalarch',response.status_code)
 
-
-def fetch_runtime_one(host=None, org_id=None, token=None, ruuid=None):
-    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime{ruuid}'
+def fetch_runtime_one(kwargs):
+    # runtime_manager -> pipeline_rt_db -> mongo
+    # get_runtime -> fetch_one -> find_one
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
+    ruuid = kwargs["ruuid"]
+    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/{ruuid}'
     headers = {
         'Authorization': token,
         'Content-Type': 'application/json; charset=UTF-8',
     }
-    params = {"level": "details"}
-    response = requests.post(endpoint, headers=headers, params=params)
+    params = { "level": "details" }
+    response = requests.get(endpoint, headers=headers, params=params)
+    print('fetch_runtime_one',response.status_code)
+
+def export_runtime(kwargs):
+    # same as fetch one but return zip file
+    # runtime_manager -> pipeline_rt_db -> mongo
+    # list -> search -> find
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
+    ruuid = kwargs["ruuid"]
+    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/export/{ruuid}'
+    headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json; charset=UTF-8',
+    }
+    params = { "level": "details" }
+    response = requests.get(endpoint, headers=headers, params=params)
+    print('export_runtime',response.status_code)
+
+def get_health_summary(kwargs):
+    # runtime_manager -> pipeline_rt_db -> mongo
+    # list_runtimes -> list -> find
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
+    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/health_summary'
+    headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json; charset=UTF-8',
+    }
+    end_ts = int(round(time.time() * 1000))
+    start_ts = int(round(time.time() * 1000)) - 3600000
+    params = { "start_ts": start_ts, "end_ts": end_ts }
+    response = requests.get(endpoint, headers=headers, params=params)
+    print('get_health_summary',response.status_code)
+
+def get_health_summary_for_pipe(kwargs):
+    # runtime_manager -> runtime_manager -> pipeline_rt_db -> mongo
+    # get_pipe_runtimes -> list_runtimes -> list -> find
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
+    pipe_fqid = kwargs["pipe_fqid"]
+    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/health_summary/{pipe_fqid}'
+    headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json; charset=UTF-8',
+    }
+    end_ts = int(round(time.time() * 1000))
+    start_ts = int(round(time.time() * 1000)) - 3600000
+    params = { "start_ts": start_ts, "end_ts": end_ts }
+    response = requests.get(endpoint, headers=headers, params=params)
+    print('get_health_summary_for_pipe',response.status_code)
+
+def get_runtime_stats(kwargs):
+    # runtime_manager -> pipeline_rt_db -> mongo
+    # get_runtime_stats -> list -> find
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
+    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/stats'
+    headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json; charset=UTF-8',
+    }
+    end_ts = int(round(time.time() * 1000))
+    start_ts = int(round(time.time() * 1000)) - 3600000
+    params = { "start_ts": start_ts, "end_ts": end_ts }
+    response = requests.get(endpoint, headers=headers, params=params)
+    print('get_runtime_stats',response.status_code)
+
+def runtime_list_queued(kwargs):
+    ### List the queued and unclaimed runtime IDs for a given Snaplex.
+    # runtime_manager -> pipeline_rt_db -> mongo
+    # list_queued -> list -> find
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
+    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/list_queued'
+    headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json; charset=UTF-8',
+    }
+    runtime_path_id = 'oregon/rt/orgplex/dev' if org_name == 'oregon' else 'singapore/rt/sgpplex/dev'
+    params = { "level": "details", "runtime_path_id": runtime_path_id }
+    response = requests.get(endpoint, headers=headers, params=params)
+    print('runtime_list_queued',response.status_code)
 
 def login(host:str, username: str, password: str):
     path = '/api/1/rest/asset/session'
@@ -108,7 +172,7 @@ def evaluate(func, **kwargs):
         result.append(kwargs["backend_server_location"])
         result.append(kwargs["organization_data"])
         start = time.perf_counter()
-        func(kwargs["host"], kwargs["org_id"], kwargs["token"])
+        func(kwargs)
         # milliseconds
         result.append(time.perf_counter() - start)
         data.append(result)   
@@ -132,19 +196,48 @@ org_id = get_orgsnid(host, username, token, org_name)
 data = []
 columns = ['endpoint','backend server location', 'organization data', 'time (secs)']
 
-print('backend server: ', org_name)
+print('backend server:', org_name)
 token = login(host, username, password)
+runtime_list = fetch_runtime_all({"host": host, "org_id":org_id, "token":token})
 evaluate(fetch_runtime_all, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime')
 evaluate(fetch_runtime_all_globalarch, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/globalarch')
+evaluate(fetch_runtime_one, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/<ruuid>', ruuid=runtime_list[1]["instance_id"])
+evaluate(get_health_summary, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/health_summary')
+evaluate(get_health_summary_for_pipe, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/health_summary/<pipe_fqid>', pipe_fqid=runtime_list[1]["class_id"])
+evaluate(get_runtime_stats, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/stats')
+evaluate(runtime_list_queued, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/list_queued')
 
-print('backend server: ', cross_org_name)
+print('backend server:', cross_org_name)
 token = login(cross_region_host, username, password)
+runtime_list = fetch_runtime_all({"host": cross_region_host, "org_id":org_id, "token":token})
 evaluate(fetch_runtime_all, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime')
 evaluate(fetch_runtime_all_globalarch, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/globalarch')
-
-token = login(host, username, password)
-ruuid_list = fetch_runtime_all(host=host, org_id=org_id, token=token)
-evaluate(fetch_runtime_one, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/<ruuid>', ruuid=ruuid_list[1]["ruuid"])
+evaluate(fetch_runtime_one, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/<ruuid>', ruuid=runtime_list[1]["instance_id"])
+evaluate(get_health_summary, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/health_summary')
+evaluate(get_health_summary_for_pipe, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/health_summary/<pipe_fqid>', pipe_fqid=runtime_list[1]["class_id"])
+evaluate(get_runtime_stats, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/stats')
+evaluate(runtime_list_queued, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/list_queued')
 
 df = pd.DataFrame(data=data, columns=columns)
-df.to_csv('result.csv')
+df.to_csv('result_fetch.csv')
+
+# username = 'admin@snaplogic.com'
+# password = 'Adm1n@12z0'
+# host = 'http://localhost:8888'
+# token = login(host, username, password)
+# org_name = 'snaplogic'
+# org_id = get_orgsnid(host, username, token, org_name)
+# runtime_list = fetch_runtime_all({"host": host, "org_id":org_id, "token":token})
+# data = []
+# columns = ['endpoint','backend server location', 'organization data', 'time (secs)']
+
+# evaluate(fetch_runtime_all, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime')
+# evaluate(fetch_runtime_all_globalarch, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/globalarch')
+# evaluate(fetch_runtime_one, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/<ruuid>', ruuid=runtime_list[1]["instance_id"])
+# evaluate(get_health_summary, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/health_summary')
+# evaluate(get_health_summary_for_pipe, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/health_summary/<pipe_fqid>', pipe_fqid=runtime_list[1]["class_id"])
+# evaluate(get_runtime_stats, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/stats')
+# evaluate(runtime_list_queued, host=host, org_id=org_id, token=token, backend_server_location=org_name, organization_data=org_name, endpoint='/runtime/list_queued')
+
+# df = pd.DataFrame(data=data, columns=columns)
+# df.to_csv('result_fetch.csv')

@@ -1,6 +1,8 @@
 import requests
 import json
 import sys
+import time
+import pandas as pd
 
 def create_pipeline(host: str, org_id: str, name: str, org_name: str):
     endpoint = f'{host}/api/2/{org_id}/rest/pipeline/create'
@@ -28,8 +30,11 @@ def update_pipeline(host: str, org_id: str, name: str, snode_id: str):
     response = requests.post(endpoint, headers=headers, params=params, data=json.dumps(data))
     print('update {} {}'.format(name, response.json()))
 
-def create_runtime(host: str, snode_id: str, org_name: str):
-    endpoint = f'{host}/api/1/rest/pipeline/prepare/{snode_id}'
+def create_runtime(kwargs):
+    host = kwargs["host"]
+    pipeline_id = kwargs["pipeline_id"]
+    org_name = kwargs["org_name"]
+    endpoint = f'{host}/api/1/rest/pipeline/prepare/{pipeline_id}'
     headers = {
         'Authorization': token,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -59,39 +64,33 @@ def get_orgsnid(host: str, username: str, org_name: str):
     for snode in org_snodes:
         if org_snodes[snode]["name"] == org_name: return snode
 
+def evaluate(func, **kwargs):
+    result = []
+    result.append(kwargs["endpoint"])
+    result.append(kwargs["backend_server_location"])
+    result.append(kwargs["organization_data"])
+    start = time.perf_counter()
+    func(kwargs)
+    # milliseconds
+    result.append(time.perf_counter() - start)
+    data.append(result)
+
 username = 'admin@snaplogic.com'
 password = 'Ephemeral$123'
-ore_host = sys.argv[1]
-sgp_host = sys.argv[2]
+host = sys.argv[1]
+org_name = sys.argv[2]
+pipeline_name = sys.argv[3]
+data = []
+columns = ['endpoint','backend server location', 'organization data', 'time (secs)']
 
-sgp_org_name = 'singapore'
-org_org_name = 'oregon'
-n = 5
-token = login(sgp_host, username, password)
-sgp_org_id = get_orgsnid(sgp_host, username, sgp_org_name)
+n = 10
+token = login(host, username, password)
+org_id = get_orgsnid(host, username, org_name)
 for i in range(1,n+1):
-    sgp_pipeline_name = f'sgp {i}'
-    sgp_pipeline_id = create_pipeline(sgp_host, sgp_org_id, sgp_pipeline_name, sgp_org_name)
-    update_pipeline(sgp_host, sgp_org_id, sgp_pipeline_name, sgp_pipeline_id)
-    create_runtime(sgp_host, sgp_pipeline_id, sgp_org_name)
+    name = f'{pipeline_name} {i}'
+    pipeline_id = create_pipeline(host, org_id, name, org_name)
+    update_pipeline(host, org_id, name, pipeline_id)
+    evaluate(create_runtime, host=host, backend_server_location=org_name, organization_data=org_name, endpoint='pipeline/prepare', pipeline_id=pipeline_id, org_name=org_name)
 
-token = login(ore_host, username, password)
-org_org_id = get_orgsnid(ore_host, username, org_org_name)
-for i in range(1,n+1):
-    org_pipeline_name = f'org {i}'
-    org_pipeline_id = create_pipeline(ore_host, org_org_id, org_pipeline_name, org_org_name)
-    update_pipeline(ore_host, org_org_id, org_pipeline_name, org_pipeline_id)
-    create_runtime(ore_host, org_pipeline_id, org_org_name)
-
-# print(token)
-
-# create pipline runtime
-
-# add region
-# mongo_host = sys.argv[2]
-
-# client = MongoClient(host=mongo_host, port=27017)
-# slserver_db = client["slserver"]
-# pipeline_rt = slserver_db["pm.pipeline_rt"]
-# pipeline_rt.update_many({"org_snode_id": sgp_org_id}, {"$set": {"region": "singapore"}})
-# pipeline_rt.update_many({"org_snode_id": org_org_id}, {"$set": {"region": "oregon"}})
+df = pd.DataFrame(data=data, columns=columns)
+df.to_csv('result_create.csv')

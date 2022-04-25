@@ -5,5 +5,5 @@
 # sudo apt-get install -y mongodb-org
 # sudo systemctl start mongod
 # pip3 install requests pymongo
-python3 create_pipeline.py $1 $2
+python3 create_pipeline.py $1 $2 $3
 #mongo --host $2:27017 < sharding.js
