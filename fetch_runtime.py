@@ -45,6 +45,24 @@ def fetch_runtime_all_globalarch(kwargs):
     response = requests.post(endpoint, headers=headers, data=json.dumps(data))
     print('fetch_runtime_all_globalarch',response.status_code)
 
+def fetch_runtime_all_unauthorize(kwargs):
+    # runtime_manager -> pipeline_rt_db -> mongo
+    # list -> search -> find
+    host = kwargs["host"]
+    org_id = kwargs["org_id"]
+    token = kwargs["token"]
+    endpoint = f'{host}/api/2/{org_id}/rest/pm/runtime/globalarch'
+    headers = {
+        'Content-Type': 'application/json; charset=UTF-8',
+    }
+    data = {
+        "state": "Completed,Stopped,Failed",
+        "offset": 0,
+        "limit": 0
+    }
+    response = requests.post(endpoint, headers=headers, data=json.dumps(data))
+    print('fetch_runtime_all_globalarch',response.status_code)
+
 def fetch_runtime_one(kwargs):
     # runtime_manager -> pipeline_rt_db -> mongo
     # get_runtime -> fetch_one -> find_one
@@ -212,6 +230,7 @@ token = login(cross_region_host, username, password)
 runtime_list = fetch_runtime_all({"host": cross_region_host, "org_id":org_id, "token":token})
 evaluate(fetch_runtime_all, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime')
 evaluate(fetch_runtime_all_globalarch, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/globalarch')
+evaluate(fetch_runtime_all_unauthorize, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/unauthorize')
 evaluate(fetch_runtime_one, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/<ruuid>', ruuid=runtime_list[1]["instance_id"])
 evaluate(get_health_summary, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/health_summary')
 evaluate(get_health_summary_for_pipe, host=cross_region_host, org_id=org_id, token=token, backend_server_location=cross_org_name, organization_data=org_name, endpoint='/runtime/health_summary/<pipe_fqid>', pipe_fqid=runtime_list[1]["class_id"])
